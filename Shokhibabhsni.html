@@ -1,1 +1,137 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شوخی</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden; /* جلوگیری از اسکرول صفحه در حین نمایش دیالوگ */
+        }
+        #dialog {
+            text-align: center;
+            border: 2px solid #000;
+            padding: 20px;
+            background-color: #f0f0f0;
+            z-index: 100; /* اطمینان از اینکه دیالوگ بالاتر از لایه پوششی است */
+        }
+        #message {
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 18px;
+            margin: 5px;
+            padding: 10px;
+        }
+        #no {
+            background-color: #ccc; /* رنگ دکمه "خیر" را خاکستری می‌کند */
+            cursor: not-allowed; /* نشانگر موس را به شکل غیرفعال تغییر می‌دهد */
+        }
+        /* دیالوگ سفارشی */
+        #custom-dialog {
+            display: none; /* مخفی کردن دیالوگ سفارشی به طور پیش‌فرض */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid #000;
+            padding: 20px;
+            background-color: #f0f0f0;
+            text-align: center;
+            z-index: 101; /* بالاتر از سایر عناصر */
+        }
+        #custom-dialog button {
+            margin: 10px;
+        }
+        /* لایه پوششی */
+        #overlay {
+            display: none; /* مخفی کردن لایه پوششی به طور پیش‌فرض */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* رنگ نیمه‌شفاف */
+            z-index: 100; /* زیر دیالوگ سفارشی */
+        }
+        #final-message {
+            display: none; /* مخفی کردن پیام نهایی به طور پیش‌فرض */
+            text-align: center;
+            font-size: 20px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="dialog">
+        <div id="message">سلام! از من عوضی‌تر هم هست آیا؟</div>
+        <button onclick="choose('yes')">بله</button>
+        <button id="no" disabled>خیر</button> <!-- دکمه "خیر" غیرفعال است -->
+    </div>
 
+    <!-- لایه پوششی -->
+    <div id="overlay"></div>
+
+    <!-- دیالوگ سفارشی -->
+    <div id="custom-dialog">
+        <p>داش حسن خرتیییم به مولا</p>
+        <button onclick="closeCustomDialog()">بستن</button>
+    </div>
+
+    <!-- پیام نهایی -->
+    <div id="final-message">
+        <p>ممنون از نظرسنجی خودتان با سپاس</p>
+    </div>
+
+    <script>
+        (function() {
+            let messages = [
+                "سلام! از من عوضی‌تر هم هست آیا؟",
+                "من خیلی آدم کثیفی هستم!",
+                "خیلییی اوسکولم!"
+            ];
+            let index = 0;
+
+            function choose(answer) {
+                if (answer === 'yes') {
+                    index++;
+                    if (index < messages.length) {
+                        document.getElementById('message').innerText = messages[index];
+                    } else {
+                        document.getElementById('message').innerText = "شما بله را انتخاب کردید! همینطور ادامه بده!";
+                        disableYesButton();
+                        showCustomDialog(); // نمایش دیالوگ سفارشی
+                    }
+                }
+            }
+
+            function disableYesButton() {
+                document.querySelector('button[onclick="choose(\'yes\')"]').disabled = true;
+            }
+
+            function showCustomDialog() {
+                document.getElementById('overlay').style.display = 'block'; // نمایش لایه پوششی
+                document.getElementById('custom-dialog').style.display = 'block'; // نمایش دیالوگ سفارشی
+            }
+
+            function closeCustomDialog() {
+                document.getElementById('custom-dialog').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none'; // پنهان کردن لایه پوششی
+                document.getElementById('final-message').style.display = 'block'; // نمایش پیام نهایی
+                document.body.style.overflow = ''; // بازگرداندن قابلیت اسکرول
+            }
+
+            // Attach the functions to global scope
+            window.choose = choose;
+            window.closeCustomDialog = closeCustomDialog;
+        })();
+    </script>
+</body>
+</html>
